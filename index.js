@@ -14,7 +14,7 @@ var async = require('async'),
     getSearchableFields = function (params, SearchValue) {
         
         params.columns.forEach((column, count)=> {
-            if (!isNaN(SearchValue) && column.name?.toLowerCase() != 'number' ) {
+            if (!isNaN(SearchValue) && column.name.toLowerCase() != 'number' ) {
                 params.columns[count].searchable = false;
             }
             

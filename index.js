@@ -92,7 +92,7 @@ var async = require('async'),
         
         // if search text is a Number then keep it as a Number.
         if (!isNaN(searchText)) {
-            searchRegex = searchText*1;
+            searchRegex = Number(searchText);
         } else {
             searchRegex = new RegExp(searchText, 'i');
         }

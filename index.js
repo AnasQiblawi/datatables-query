@@ -11,7 +11,15 @@ var async = require('async'),
      * @param params
      * @returns {Array}
      */
-    getSearchableFields = function (params) {
+    getSearchableFields = function (params, SearchValue) {
+        
+        params.columns.forEach((column, count)=> {
+            if (!isNaN(SearchValue) && column.name?.toLowerCase() != 'number' ) {
+                params.columns[count].searchable = false;
+            }
+            
+        })
+        
         return params.columns.filter(function (column) {
             return JSON.parse(column.searchable);
         }).map(function (column) {
@@ -69,6 +77,10 @@ var async = require('async'),
         }
 
         searchRegex = new RegExp(searchText, 'i');
+        // if search text is a Number the keep it as a Number.
+        if (!isNaN(searchText)) {
+           searchRegex = searchText*1;
+        };
 
         var searchableFields = getSearchableFields(params);
 

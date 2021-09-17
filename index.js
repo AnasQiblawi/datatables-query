@@ -188,9 +188,7 @@ var async = require('async'),
          * Performs the query on the passed Model object, using the DataTable params argument
          * @param {Object} params DataTable params object
          */
-        return function (params, ExtraSearch={}) {
-            console.log(1)
-            console.log(ExtraSearch)
+        return function (params, Extra_Search_Queries={}) {
 
             var draw = Number(params.draw),
                 start = Number(params.start),
@@ -201,11 +199,8 @@ var async = require('async'),
                 recordsTotal,
                 recordsFiltered;
                 
-                console.log(2)
-                console.log(findParameters)
-                findParameters = { ...findParameters, ...ExtraSearch }
-                console.log(3)
-                console.log(findParameters)
+                // AnasQiblawi: I added this to be able to do more customized search
+                findParameters = { ...findParameters, ...Extra_Search_Queries }
 
             return new Promise(function (fullfill, reject) {
 

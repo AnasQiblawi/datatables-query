@@ -182,6 +182,7 @@ var async = require('async'),
      * @returns {Function} the actual run function with Model in its scope
      */
     run = function (Model, ExtraSearch) {
+        console.log(1)
         console.log(ExtraSearch)
         ExtraSearch = ExtraSearch || {};
         /**
@@ -190,7 +191,10 @@ var async = require('async'),
          * Performs the query on the passed Model object, using the DataTable params argument
          * @param {Object} params DataTable params object
          */
-        return function (params) {
+        return function (params, ExtraSearch) {
+            console.log(2)
+            console.log(ExtraSearch)
+            ExtraSearch = ExtraSearch || {};
 
             var draw = Number(params.draw),
                 start = Number(params.start),

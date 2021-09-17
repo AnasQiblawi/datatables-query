@@ -31,7 +31,7 @@ var async = require('async'),
             };
         });
         console.log('-----------------------------------')
-        console.log(JSON.stringify(params));
+        console.log(params);
         
         return params.columns.filter(function (column) {
             return JSON.parse(column.searchable);

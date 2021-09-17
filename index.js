@@ -198,6 +198,8 @@ var async = require('async'),
                 selectParameters = buildSelectParameters(params),
                 recordsTotal,
                 recordsFiltered;
+                
+                console.log(findParameters)
 
             return new Promise(function (fullfill, reject) {
 

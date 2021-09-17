@@ -112,6 +112,7 @@ var async = require('async'),
 
         findParameters.$or = searchOrArray;
 
+        
         return findParameters;
     },
 
@@ -180,7 +181,7 @@ var async = require('async'),
      * @param {Object} Model Mongoose Model Object, target of the search
      * @returns {Function} the actual run function with Model in its scope
      */
-    run = function (Model) {
+    run = function (Model, ExtraSearch={}) {
 
         /**
          * Method Run
@@ -193,12 +194,12 @@ var async = require('async'),
             var draw = Number(params.draw),
                 start = Number(params.start),
                 length = Number(params.length),
-                findParameters = buildFindParameters(params),
+                findParameters = { ...(buildFindParameters(params)), ...ExtraSearch },
                 sortParameters = buildSortParameters(params),
                 selectParameters = buildSelectParameters(params),
                 recordsTotal,
                 recordsFiltered;
-                
+
                 console.log(findParameters)
 
             return new Promise(function (fullfill, reject) {

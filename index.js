@@ -181,30 +181,30 @@ var async = require('async'),
      * @param {Object} Model Mongoose Model Object, target of the search
      * @returns {Function} the actual run function with Model in its scope
      */
-    run = function (Model, ExtraSearch) {
-        console.log(1)
-        console.log(ExtraSearch)
-        ExtraSearch = ExtraSearch || {};
+    run = function (Model) {
         /**
          * Method Run
          * The actual run function
          * Performs the query on the passed Model object, using the DataTable params argument
          * @param {Object} params DataTable params object
          */
-        return function (params, ExtraSearch) {
-            console.log(2)
+        return function (params, ExtraSearch={}) {
+            console.log(1)
             console.log(ExtraSearch)
-            ExtraSearch = ExtraSearch || {};
 
             var draw = Number(params.draw),
                 start = Number(params.start),
                 length = Number(params.length),
-                findParameters = { ...(buildFindParameters(params)), ...ExtraSearch },
+                findParameters = buildFindParameters(params),
                 sortParameters = buildSortParameters(params),
                 selectParameters = buildSelectParameters(params),
                 recordsTotal,
                 recordsFiltered;
-
+                
+                console.log(2)
+                console.log(findParameters)
+                findParameters = { ...findParameters, ...ExtraSearch }
+                console.log(3)
                 console.log(findParameters)
 
             return new Promise(function (fullfill, reject) {

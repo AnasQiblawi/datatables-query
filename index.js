@@ -14,24 +14,24 @@ var async = require('async'),
     getSearchableFields = function (params, SearchValue) {
         
         params.columns.forEach((column, count)=> {
-            console.log(column.name);
+
             // Search for numbers in number value columns only
-            if (!isNaN(SearchValue) && column.name.toLowerCase() != 'number' ) {
+            if (!isNaN(SearchValue) && column.name.toLowerCase() != 'number' && column.searchable) {
                 params.columns[count].searchable = false;
             };
-            if (!isNaN(SearchValue) && column.name.toLowerCase() == 'number' ) {
+            if (!isNaN(SearchValue) && column.name.toLowerCase() == 'number' && column.searchable ) {
                 params.columns[count].searchable = true;
             };
+
             // Search for text , disable searching in Number valued columns
-            if (isNaN(SearchValue) && column.name.toLowerCase() == 'number' ) {
-                params.columns[count].searchable = false;
-            };
-            if (isNaN(SearchValue) && column.name.toLowerCase() != 'number' ) {
+            if (isNaN(SearchValue) && column.name.toLowerCase() == 'string' && column.searchable ) {
                 params.columns[count].searchable = true;
             };
+            if (isNaN(SearchValue) && column.name.toLowerCase() != 'string' && column.searchable ) {
+                params.columns[count].searchable = false;
+            };
+
         });
-        console.log('-----------------------------------')
-        console.log(params);
         
         return params.columns.filter(function (column) {
             return JSON.parse(column.searchable);

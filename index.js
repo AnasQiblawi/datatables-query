@@ -13,15 +13,14 @@ var async = require('async'),
      */
     getSearchableFields = function (params, SearchValue) {
         
-        console.log(JSON.stringify(params));
-        
         params.columns.forEach((column, count)=> {
             console.log(column.name);
             if (!isNaN(SearchValue) && column.name.toLowerCase() != 'number' ) {
                 params.columns[count].searchable = false;
-            }
-            
-        })
+            };
+        });
+        console.log('-----------------------------------')
+        console.log(params);
         
         return params.columns.filter(function (column) {
             return JSON.parse(column.searchable);

@@ -181,8 +181,9 @@ var async = require('async'),
      * @param {Object} Model Mongoose Model Object, target of the search
      * @returns {Function} the actual run function with Model in its scope
      */
-    run = function (Model, ExtraSearch={}) {
-
+    run = function (Model, ExtraSearch) {
+        console.log(ExtraSearch)
+        ExtraSearch = ExtraSearch || {};
         /**
          * Method Run
          * The actual run function

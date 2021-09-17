@@ -89,11 +89,13 @@ var async = require('async'),
             return findParameters;
         }
 
-        searchRegex = new RegExp(searchText, 'i');
-        // if search text is a Number the keep it as a Number.
+        
+        // if search text is a Number then keep it as a Number.
         if (!isNaN(searchText)) {
-           searchRegex = searchText*1;
-        };
+            searchRegex = searchText*1;
+        } else {
+            searchRegex = new RegExp(searchText, 'i');
+        }
 
         var searchableFields = getSearchableFields(params);
 

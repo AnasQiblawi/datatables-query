@@ -15,12 +15,23 @@ var async = require('async'),
         
         params.columns.forEach((column, count)=> {
             console.log(column.name);
+            // Search for numbers in number value columns only
             if (!isNaN(SearchValue) && column.name.toLowerCase() != 'number' ) {
                 params.columns[count].searchable = false;
             };
+            if (!isNaN(SearchValue) && column.name.toLowerCase() == 'number' ) {
+                params.columns[count].searchable = true;
+            };
+            // Search for text , disable searching in Number valued columns
+            if (isNaN(SearchValue) && column.name.toLowerCase() == 'number' ) {
+                params.columns[count].searchable = false;
+            };
+            if (isNaN(SearchValue) && column.name.toLowerCase() != 'number' ) {
+                params.columns[count].searchable = true;
+            };
         });
         console.log('-----------------------------------')
-        console.log(params);
+        console.log(JSON.stringify(params));
         
         return params.columns.filter(function (column) {
             return JSON.parse(column.searchable);

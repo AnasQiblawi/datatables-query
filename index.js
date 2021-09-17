@@ -17,18 +17,18 @@ var async = require('async'),
 
             // Search for numbers in number value columns only
             if (!isNaN(SearchValue) && column.name.toLowerCase() != 'number' && column.searchable) {
-                params.columns[count].searchable = false;
+                column.searchable = false;
             };
             if (!isNaN(SearchValue) && column.name.toLowerCase() == 'number' && column.searchable ) {
-                params.columns[count].searchable = true;
+                column.searchable = true;
             };
 
             // Search for text , disable searching in Number valued columns
             if (isNaN(SearchValue) && column.name.toLowerCase() == 'string' && column.searchable ) {
-                params.columns[count].searchable = true;
+                column.searchable = true;
             };
             if (isNaN(SearchValue) && column.name.toLowerCase() != 'string' && column.searchable ) {
-                params.columns[count].searchable = false;
+                column.searchable = false;
             };
 
         });

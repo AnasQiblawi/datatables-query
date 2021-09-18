@@ -13,6 +13,7 @@ var async = require('async'),
      */
     getSearchableFields = function (params, SearchValue) {
         
+        
         params.columns.forEach((column, count)=> {
 
             // Search for numbers in number value columns only
@@ -32,6 +33,7 @@ var async = require('async'),
             };
 
         });
+        
         
         return params.columns.filter(function (column) {
             return JSON.parse(column.searchable);
@@ -83,34 +85,87 @@ var async = require('async'),
         var searchText = params.search.value,
             findParameters = {},
             searchRegex,
-            searchOrArray = [];
+            searchOrArray = [],
+            searchAndArray = [];
 
         if (searchText === '') {
             return findParameters;
         }
 
         
+        searchRegex = new RegExp(searchText, 'i');
         // if search text is a Number then keep it as a Number.
+        
         if (!isNaN(searchText)) {
             searchRegex = Number(searchText);
-        } else {
-            searchRegex = new RegExp(searchText, 'i');
         }
-
-        var searchableFields = getSearchableFields(params);
-
+        
+        //Global Search ---------------
+        var searchableFields = getSearchableFields(params, searchText);
+        
         if (searchableFields.length === 1) {
             findParameters[searchableFields[0]] = searchRegex;
             return findParameters;
         }
 
+        
         searchableFields.forEach(function (field) {
             var orCondition = {};
             orCondition[field] = searchRegex;
             searchOrArray.push(orCondition);
         });
-
+        console.log(1)
+        console.log(searchOrArray)
         findParameters.$or = searchOrArray;
+
+
+        // Columns Search Filter -------------
+        var CustomSearchColumns = [];
+        params.columns.forEach((column) => {
+            if (column.search.value) {
+                CustomSearchColumns.push(column)
+            }
+        });
+
+
+        var ColumnsConditions = {};
+        CustomSearchColumns.forEach( e => {
+            let field = e.data;
+            let type = e.name.toLowerCase();
+            let searchValue = e.search.value.slice(1, -1)
+            console.log(searchValue)
+            searchAndArray.push({[field]:(type == 'number' || !isNaN(searchValue) ? Number(searchValue) : new RegExp(searchValue, 'i'))});
+
+             
+            // if (type == 'string') { 
+            //     searchValue = (new RegExp(searchValue, 'i')) 
+            // };
+            // if (type == 'number' && !isNaN(searchValue)) {
+            //     searchValue = Number(searchValue) 
+            // };
+            // if (type == 'date' && (new Date(searchValue) !== "Invalid Date") && !isNaN(new Date(searchValue).getTime())) {
+            //     let _date = new Date(decodeURIComponent(searchValue));
+            //     console.log('date')
+            //     console.log(_date)
+            //     console.log({ $gte: _date, $lte: _date })
+            //     searchValue = {
+            //         $gte: new Date(new Date(_date).getTime() - 1),  // start date
+            //         $lte: new Date(new Date(_date).getTime() + 1)   // end date
+            //     }
+            // };
+
+            // searchAndArray.push({[field]:searchValue});
+
+
+        });
+        
+
+        console.log(2)
+        console.log(searchAndArray)
+        // findParameters.$or = searchOrArray;
+        if (searchAndArray.length > 0) {
+            findParameters.$and = searchAndArray;
+        }
 
         
         return findParameters;
@@ -201,6 +256,8 @@ var async = require('async'),
                 
                 // AnasQiblawi: I added this to be able to do more customized search
                 findParameters = { ...findParameters, ...Extra_Search_Queries }
+                console.log(3)
+                console.log(findParameters)
 
             return new Promise(function (fullfill, reject) {
 

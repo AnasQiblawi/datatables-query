@@ -88,9 +88,12 @@ var async = require('async'),
             searchOrArray = [],
             searchAndArray = [];
 
-        if (searchText === '') {
-            return findParameters;
-        }
+        
+        // Global Search ---------------
+        // if (searchText === '') {
+        //     return findParameters;
+        // }
+        if (searchText != '') {
 
         
         searchRegex = new RegExp(searchText, 'i');
@@ -100,7 +103,7 @@ var async = require('async'),
             searchRegex = Number(searchText);
         }
         
-        //Global Search ---------------
+
         var searchableFields = getSearchableFields(params, searchText);
         
         if (searchableFields.length === 1) {
@@ -118,6 +121,9 @@ var async = require('async'),
         console.log(searchOrArray)
         findParameters.$or = searchOrArray;
 
+        }; // End: Global Search
+
+
 
         // Columns Search Filter -------------
         var CustomSearchColumns = [];
@@ -132,7 +138,8 @@ var async = require('async'),
         CustomSearchColumns.forEach( e => {
             let field = e.data;
             let type = e.name.toLowerCase();
-            let searchValue = e.search.value.slice(1, -1)
+            // let searchValue = e.search.value.slice(1, -1);
+            let searchValue = e.search.value;
             console.log(searchValue)
             searchAndArray.push({[field]:(type == 'number' || !isNaN(searchValue) ? Number(searchValue) : new RegExp(searchValue, 'i'))});
 

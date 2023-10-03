@@ -117,8 +117,7 @@ var async = require('async'),
             orCondition[field] = searchRegex;
             searchOrArray.push(orCondition);
         });
-        console.log(1)
-        console.log(searchOrArray)
+        
         findParameters.$or = searchOrArray;
 
         }; // End: Global Search
@@ -140,7 +139,7 @@ var async = require('async'),
             let type = e.name.toLowerCase();
             // let searchValue = e.search.value.slice(1, -1);
             let searchValue = e.search.value;
-            console.log(searchValue)
+            
             searchAndArray.push({[field]:(type == 'number' || !isNaN(searchValue) ? Number(searchValue) : new RegExp(searchValue, 'i'))});
 
              
@@ -167,8 +166,6 @@ var async = require('async'),
         });
         
 
-        console.log(2)
-        console.log(searchAndArray)
         // findParameters.$or = searchOrArray;
         if (searchAndArray.length > 0) {
             findParameters.$and = searchAndArray;
@@ -250,21 +247,20 @@ var async = require('async'),
          * Performs the query on the passed Model object, using the DataTable params argument
          * @param {Object} params DataTable params object
          */
-        return function (params, Extra_Search_Queries={}) {
+        return function (params, Extra_Search_Queries = {}) {
 
             var draw = Number(params.draw),
                 start = Number(params.start),
                 length = Number(params.length),
-                findParameters = buildFindParameters(params),
-                sortParameters = buildSortParameters(params),
-                selectParameters = buildSelectParameters(params),
+                findParameters = buildFindParameters(params) || {},
+                sortParameters = buildSortParameters(params) || {},
+                selectParameters = buildSelectParameters(params) || {},
                 recordsTotal,
                 recordsFiltered;
                 
                 // AnasQiblawi: I added this to be able to do more customized search
                 findParameters = { ...findParameters, ...Extra_Search_Queries }
-                console.log(3)
-                console.log(findParameters)
+                
 
             return new Promise(function (fullfill, reject) {
 
@@ -281,40 +277,45 @@ var async = require('async'),
                         cb();
                     },
                     function fetchRecordsTotal (cb) {
-                        Model.count({}, function (err, count) {
-                            if (err) {
+                        Model.countDocuments({})
+                            .then(function (count) {
+                                recordsTotal = count;
+                                cb();
+                            })
+                            .catch(function (err) {
                                 return cb(err);
-                            }
-                            recordsTotal = count;
-                            cb();
-                        });
+                            });
                     },
                     function fetchRecordsFiltered (cb) {
-                        Model.count(findParameters, function (err, count) {
-                            if (err) {
+                        Model.countDocuments(findParameters)
+                            .then(function (count) {
+                                recordsFiltered = count;
+                                cb();
+                            })
+                            .catch(function (err) {
                                 return cb(err);
-                            }
-                            recordsFiltered = count;
-                            cb();
-                        });
+                            });
                     },
                     function runQuery (cb) {
                         Model
                             .find(findParameters)
+                            // .populate('')
                             .select(selectParameters)
                             .limit(length)
                             .skip(start)
                             .sort(sortParameters)
-                            .exec(function (err, results) {
-                                if (err) {
-                                    return cb(err);
-                                }
+                            // Use then and catch instead of callback
+                            .exec()
+                            .then(function (results) {
                                 cb(null, {
                                     draw: draw,
                                     recordsTotal: recordsTotal,
                                     recordsFiltered: recordsFiltered,
                                     data: results
                                 });
+                            })
+                            .catch(function (err) {
+                                return cb(err);
                             });
 
                     }

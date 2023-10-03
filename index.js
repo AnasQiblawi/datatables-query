@@ -1,3 +1,5 @@
+// https://github.com/AnasQiblawi/datatables-query
+
 'use strict';
 
 var async = require('async'),
@@ -248,10 +250,11 @@ var async = require('async'),
          * @param {Object} params DataTable params object
          */
         return function (params, Extra_Search_Queries = {}) {
-
-            var draw = Number(params.draw),
-                start = Number(params.start),
-                length = Number(params.length),
+            
+            var draw = Number(params.draw) || 1,
+                start = Number(params.start) || 0,
+                length = Number(params.length) || 0,
+                populate = params?.populate || [],
                 findParameters = buildFindParameters(params) || {},
                 sortParameters = buildSortParameters(params) || {},
                 selectParameters = buildSelectParameters(params) || {},
@@ -260,7 +263,6 @@ var async = require('async'),
                 
                 // AnasQiblawi: I added this to be able to do more customized search
                 findParameters = { ...findParameters, ...Extra_Search_Queries }
-                
 
             return new Promise(function (fullfill, reject) {
 
@@ -299,7 +301,7 @@ var async = require('async'),
                     function runQuery (cb) {
                         Model
                             .find(findParameters)
-                            // .populate('')
+                            .populate(populate)
                             .select(selectParameters)
                             .limit(length)
                             .skip(start)

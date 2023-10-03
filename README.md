@@ -63,7 +63,7 @@ app.post('/path/to/api/endpoint', function (req, res) {
         params = req.body,
         query = datatablesQuery(Model);
 
-    query.run(params).then(function (data) {
+    query.run(params, { /* extra options */}).then(function (data) {
         res.json(data);
     }, function (err) {
         res.status(500).json(err);

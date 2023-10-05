@@ -44,51 +44,28 @@ var async = require('async'),
             // }
             
             
-            // Variables
-            let dataType = column?.name?.toLowerCase();
+            // Check Data Type
+            let dataType = typeof SearchValue;
+
+            // If the value is numeric, set the data type to 'number'
+            if (!isNaN(SearchValue)) dataType = 'number';
+
+            // If the value is a valid Date, set the data type to 'date'
+            if (new Date(SearchValue).toString() === SearchValue) dataType = 'date';
+
+            // Set the column name to the detected data type for reference
+            column.name = dataType;
+
+            // If column.searchable is not explicitly set to true, set it to false
+            if (column?.searchable !== true) column.searchable = false;
 
 
-            // If the column is not of any known type and is marked as searchable, disable searching
-            if (!['number', 'string'].includes(dataType) && column.searchable) {
+            // For now, only accept search filters for numbers and strings
+            // If the column is not of any known type ('number' or 'string') and is marked as searchable, disable searching
+            if (!['number', 'string'].includes(dataType) && column?.searchable) {
                 column.searchable = false;
             }
-
-            // Check if the column is of 'number' type and SearchValue is not a number
-            if (dataType === 'number' && (typeof SearchValue !== 'number' && isNaN(SearchValue)) && column.searchable) {
-                // Disable searching for this column
-                column.searchable = false;
-            }
-
-            // Check if the column is of 'string' type and SearchValue is not a string
-            if (dataType === 'string' && typeof SearchValue !== 'string' && column.searchable) {
-                // Disable searching for this column
-                column.searchable = false;
-            }
-
-            // Check if the column is of 'date' type and SearchValue is not a valid date
-            if (dataType === 'date' && !(new Date(SearchValue) instanceof Date) && column.searchable) {
-                // Disable searching for this column
-                column.searchable = false;
-            }
-
-            // Check if the column is of 'boolean' type and SearchValue is not a boolean
-            if (dataType === 'boolean' && typeof SearchValue !== 'boolean' && column.searchable) {
-                // Disable searching for this column
-                column.searchable = false;
-            }
-
-            // Check if the column is of 'object' type and SearchValue is not an object
-            if (dataType === 'object' && typeof SearchValue !== 'object' && column.searchable) {
-                // Disable searching for this column
-                column.searchable = false;
-            }
-
-            // Check if the column is of 'array' type and SearchValue is not an array
-            if (dataType === 'array' && !Array.isArray(SearchValue) && column.searchable) {
-                // Disable searching for this column
-                column.searchable = false;
-            }
-
+            
         });
 
 

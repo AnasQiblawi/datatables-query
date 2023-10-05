@@ -14,29 +14,85 @@ var async = require('async'),
      * @returns {Array}
      */
     getSearchableFields = function (params, SearchValue) {
-        
-        
-        params.columns.forEach((column, count)=> {
 
-            // Search for numbers in number value columns only
-            if (!isNaN(SearchValue) && column.name.toLowerCase() != 'number' && column.searchable) {
-                column.searchable = false;
-            };
-            if (!isNaN(SearchValue) && column.name.toLowerCase() == 'number' && column.searchable ) {
-                column.searchable = true;
-            };
 
-            // Search for text , disable searching in Number valued columns
-            if (isNaN(SearchValue) && column.name.toLowerCase() == 'string' && column.searchable ) {
-                column.searchable = true;
-            };
-            if (isNaN(SearchValue) && column.name.toLowerCase() != 'string' && column.searchable ) {
+        params.columns.forEach((column, count) => {  
+            
+            
+            // // Check if SearchValue is a number and the column is not labeled as "number"
+            // if (!isNaN(SearchValue) && column.name.toLowerCase() !== 'number' && column.searchable) {
+            //     // Disable searching for this column
+            //     column.searchable = false;
+            // }
+
+            // // Check if SearchValue is a number and the column is labeled as "number"
+            // if (!isNaN(SearchValue) && column.name.toLowerCase() === 'number' && column.searchable) {
+            //     // Enable searching for this column
+            //     column.searchable = true;
+            // }
+
+            // // Check if SearchValue is not a number and the column is labeled as "string"
+            // if (isNaN(SearchValue) && column.name.toLowerCase() === 'string' && column.searchable) {
+            //     // Enable searching for this column
+            //     column.searchable = true;
+            // }
+
+            // // Check if SearchValue is not a number and the column is not labeled as "string"
+            // if (isNaN(SearchValue) && column.name.toLowerCase() !== 'string' && column.searchable) {
+            //     // Disable searching for this column
+            //     column.searchable = false;
+            // }
+            
+            
+            // Variables
+            let dataType = column?.name?.toLowerCase();
+
+
+            // If the column is not of any known type and is marked as searchable, disable searching
+            if (!['number', 'string'].includes(dataType) && column.searchable) {
                 column.searchable = false;
-            };
+            }
+
+            // Check if the column is of 'number' type and SearchValue is not a number
+            if (dataType === 'number' && (typeof SearchValue !== 'number' && isNaN(SearchValue)) && column.searchable) {
+                // Disable searching for this column
+                column.searchable = false;
+            }
+
+            // Check if the column is of 'string' type and SearchValue is not a string
+            if (dataType === 'string' && typeof SearchValue !== 'string' && column.searchable) {
+                // Disable searching for this column
+                column.searchable = false;
+            }
+
+            // Check if the column is of 'date' type and SearchValue is not a valid date
+            if (dataType === 'date' && !(new Date(SearchValue) instanceof Date) && column.searchable) {
+                // Disable searching for this column
+                column.searchable = false;
+            }
+
+            // Check if the column is of 'boolean' type and SearchValue is not a boolean
+            if (dataType === 'boolean' && typeof SearchValue !== 'boolean' && column.searchable) {
+                // Disable searching for this column
+                column.searchable = false;
+            }
+
+            // Check if the column is of 'object' type and SearchValue is not an object
+            if (dataType === 'object' && typeof SearchValue !== 'object' && column.searchable) {
+                // Disable searching for this column
+                column.searchable = false;
+            }
+
+            // Check if the column is of 'array' type and SearchValue is not an array
+            if (dataType === 'array' && !Array.isArray(SearchValue) && column.searchable) {
+                // Disable searching for this column
+                column.searchable = false;
+            }
 
         });
-        
-        
+
+
+
         return params.columns.filter(function (column) {
             return JSON.parse(column.searchable);
         }).map(function (column) {

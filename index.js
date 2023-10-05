@@ -57,7 +57,7 @@ var async = require('async'),
             column.name = dataType;
 
             // If column.searchable is not explicitly set to true, set it to false
-            if (column?.searchable !== true) column.searchable = false;
+            if (column?.searchable != true) column.searchable = false;
 
 
             // For now, only accept search filters for numbers and strings
